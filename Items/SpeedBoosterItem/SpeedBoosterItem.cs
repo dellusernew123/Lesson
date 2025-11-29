@@ -7,23 +7,26 @@ public class SpeedBoosterItem : Item
 
     private bool _isSpeedBoostTimerWorking = false;
     private float _timer = 0;
+    private PlayerController _playerController;
+    private PlayerExtra _playerExtra;
 
-    protected override void Use()
+    public override void Use(GameObject player)
     {
+        _playerController = player.GetComponent<PlayerController>();
+        _playerExtra = player.GetComponent<PlayerExtra>();
+
         ApplyBoost();
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (_isSpeedBoostTimerWorking == true)
             UpdateTimer();
     }
 
     private void ApplyBoost()
     {
-        _player.MultiplySpeed(_speedMultiplier);
+        _playerController.MultiplySpeed(_speedMultiplier);
         _isSpeedBoostTimerWorking = true;
 
         ActivateParticle();
@@ -34,8 +37,10 @@ public class SpeedBoosterItem : Item
         if (_timer >= _speedBoostTimeDuration)
         {
             _isSpeedBoostTimerWorking = false;
-            _player.MultiplySpeed(1);
-            _player.FreeArm();
+            _playerController.MultiplySpeed(1);
+            _playerExtra.FreeArm();
+            IsItemEquipped = false;
+
             Destroy(gameObject);
         }
 

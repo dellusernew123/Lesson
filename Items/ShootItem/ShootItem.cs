@@ -4,19 +4,20 @@ public class ShootItem : Item
 {
     [SerializeField] private float _throwingSpeed = 10;
     [SerializeField] private float _throwingObjectLivingDuration = 3;
+
+    PlayerExtra _playerExtra;
     
     private bool _isMoving = false;
     private float _timer = 0;
     
-    protected override void Use()
+    public override void Use(GameObject player)
     {
+        _playerExtra = player.GetComponent<PlayerExtra>();
         Throw();
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (_isMoving == true)
             Move();
     }
@@ -24,9 +25,11 @@ public class ShootItem : Item
     private void Throw()
     {
         transform.SetParent(null);
-        transform.position = _player.transform.position;
-        transform.rotation = _player.transform.rotation;
-        _player.FreeArm();
+        transform.position = _playerExtra.transform.position;
+        transform.rotation = _playerExtra.transform.rotation;
+        _playerExtra.FreeArm();
+        IsItemEquipped = false;
+
         ActivateParticle();
 
         _isMoving = true;
